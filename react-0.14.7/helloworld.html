@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>hello react</title>
+	<script src="build/react.js"></script>
+	<script src="build/react-dom.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+	<style>
+		.colorClass{color:red;}
+		.red{color:red;}
+		.blue{color:blue;}
+	</style>
+</head>
+<body>
+	<div class="examples">
+		<p class="title">1.组件 输出hello world</p>
+		<div id="example1">
+			
+		</div>
+	</div>
+	<div class="examples">
+		<p class="title">2. 点击变色 </p>
+		<div id="example2"></div>
+	</div>
+	<div class="examples">
+		<p class="title">3. toggle 颜色</p>
+		<div id="example3"></div>
+	</div>
+	<div class="examples">
+		<p class="title">4. 输出秒数</p>
+		<div id="example4"></div>
+	</div>
+
+	<div class="examples">
+		<p class="title">5. 表单元素change</p>
+		<div id="example5"></div>
+	</div>
+
+	<script type="text/babel">
+	var HelloWorld  = React.createClass({
+		render: function(){
+			return <h1 className={this.props.color}>Hello, world</h1>;
+		}
+	});
+
+	ReactDOM.render(
+		<HelloWorld color="colorClass" />,
+		document.getElementById('example1')
+	);
+
+	var HelloWorld2 = React.createClass({
+		  handleClick: function() {
+		    this.refs.myContent.className = this.props.color; 
+		  },
+		  render: function() {
+		    return (
+		      <div>
+		        <h1 ref="myContent">Hello，World！</h1>
+		        <input type="button" value="change Color" onClick={this.handleClick} />
+		      </div>
+		    );
+		  }
+	});
+
+	ReactDOM.render(
+		<HelloWorld2 color="colorClass"/>,
+		document.getElementById('example2')
+	);
+
+	var HelloWorld3 = React.createClass({
+		  getInitialState: function() {
+		    return {isColors: false,count:0,curtimer:new Date()};
+		  },
+		  handleClick: function(event) {
+			 this.setState({isColors: !this.state.isColors});
+		  },
+		  handleClickClear: function(event) {
+			 this.setState({count: 0});
+		  },
+		  render: function() {
+		  	var colorClass = this.state.isColors ? 'red' : 'blue';
+		  	var count = this.state.count++;
+		    return (
+		      <div>
+		        <h1 ref="myContent" className = {colorClass} >Hello，World！ 点击次数{count} </h1>
+		        <input type="button" value="toggle Color" onClick={this.handleClick} />
+		        <input type="button" value="clear count" onClick={this.handleClickClear} />
+		      </div>
+		    );
+		  }
+	});
+
+	ReactDOM.render(
+		<HelloWorld3 date={new Date()}/>,
+		document.getElementById('example3')
+	);
+
+// var HelloWorld4 = React.createClass({
+// 		  getInitialState: function() {
+// 		    return {count:0};
+// 		  },
+// 		  handleClick: function(event) {
+// 			 this.setState({isColors: !this.state.isColors});
+// 		  },
+// 		  render: function() {
+// 		    return (
+// 		      <div>
+// 		        <h1 >Hello，World！</h1>
+// 		        <p>访问秒数({timer1});</p>
+// 		        <input type="button" value="" onClick={this.handleClick} />
+// 		      </div>
+// 		    );
+// 		  }
+// 	});
+
+	// ReactDOM.render(
+	// 	<HelloWorld4 date={new Date()}/>,
+	// 	document.getElementById('example4')
+	// );
+var Timer = React.createClass({
+  getInitialState: function() {
+    return {secondsElapsed: 0};
+  },
+  tick: function() {
+    this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+  },
+  componentDidMount: function() {
+    this.interval = setInterval(this.tick, 1000);
+  },
+  componentWillUnmount: function() {
+  	this.setState({secondsElapsed: 0});
+    clearInterval(this.interval);
+  },
+  handleClick: function(e){
+  	clearInterval(this.interval);
+  	this.setState({secondsElapsed: 0});
+  },
+  render: function() {
+    return (
+   	  <div>
+ 			<div>Seconds Elapsed: {this.state.secondsElapsed}</div>
+ 			<input type="button" value="clearTimer" onClick={this.componentWillUnmount.bind(this)} />
+ 			<input type="button" value="restartTimer" onClick={this.componentDidMount.bind(this)} />
+   	  </div>
+     
+    );
+  }
+});
+
+ReactDOM.render(<Timer/>, document.getElementById('example4'));
+
+
+var Input = React.createClass({
+  getInitialState: function() {
+    return {value: 'Hello!'};
+  },
+  handleChange: function(event) {
+    this.setState({value: event.target.value});
+  },
+  render: function () {
+    var value = this.state.value;
+    return (
+      <div>
+        <input type="text" value={value} onChange={this.handleChange} />
+        <p>{value}</p>
+      </div>
+    );
+  }
+});
+
+ReactDOM.render(<Input/>, document.getElementById('example5'));
+
+
+	//
+
+	// // 1. 输出
+	//     ReactDOM.render(
+	//     	<h1>Hello，World！</h1>，
+	//     	document.getElementById('container');
+	//     );
+
+	// 	var HelloWorld = React.createClass({
+	// 	  render: function() {
+	// 	    return (
+	// 	      <p>
+	// 	        Hello, world<input type="text" placeholder="Your name here" style="color:{this.props.color}"/>!
+	// 	        It is {this.props.date.toTimeString()}
+	// 	      </p>
+	// 	    );
+	// 	  }
+	// 	});
+
+	// 	setInterval(function() {
+	// 	  React.render(
+	// 	    <HelloWorld date={new Date()} color="red"/>,
+	// 	    document.getElementById('example')
+	// 	  );
+	// 	}, 500);
+
+
+
+
+
+	</script>
+	
+</body>
+</html>
